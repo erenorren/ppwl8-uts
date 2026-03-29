@@ -7,11 +7,9 @@ import { createOAuthClient, getAuthUrl } from "./auth";
 import { getCourses, getCourseWorks, getSubmissions } from "./classroom";
 import type { ApiResponse, HealthCheck, User } from "shared";
 
-// Simple in-memory token store
 const tokenStore = new Map<string, { access_token: string; refresh_token?: string }>();
 
 const app = new Elysia()
-  // 1. Konfigurasi CORS (Gunakan ENV untuk Production)
   .use(
     cors({
       origin: process.env.FRONTEND_URL || "http://localhost:5173",
@@ -22,7 +20,6 @@ const app = new Elysia()
   .use(swagger())
   .use(cookie())
 
-  // 2. Keamanan API Key untuk route /users
   .onRequest(({ request, set }) => {
     const url = new URL(request.url);
     if (url.pathname.startsWith("/users")) {
@@ -78,7 +75,6 @@ const app = new Elysia()
     session.maxAge = 60 * 60 * 24; // 1 hari
     session.path = "/";
 
-    // Pengaturan Cookie untuk Production (Vercel)
     session.httpOnly = true;
     session.secure = true;    
     session.sameSite = "none"; 
@@ -139,7 +135,6 @@ const app = new Elysia()
     return { data: result, message: "Course submissions retrieved" };
   });
 
-// 3. Kondisi Listen & Logger (Hanya di Development)
 if (process.env.NODE_ENV !== "production") {
   app.listen(3000);
   console.log(`🦊 Backend → http://localhost:3000`);
@@ -147,6 +142,5 @@ if (process.env.NODE_ENV !== "production") {
   console.log(`🦊 FRONTEND_URL → ${process.env.FRONTEND_URL}`);
 }
 
-// 4. Export Default untuk Vercel Serverless
 export default app;
 export type App = typeof app;
