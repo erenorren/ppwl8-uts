@@ -47,7 +47,7 @@ const app = new Elysia()
 
   .get("/users", async () => {
     const users = await prisma.user.findMany();
-    return { data: users, message: "User list retrieved." };
+    return { data: users, message: "User list retrieved" };
   })
 
   // --- AUTH ROUTES ---
